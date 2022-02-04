@@ -82,6 +82,7 @@ func run(ws *websocket.Conn) {
 			Cols: cols,
 		}
 
+
 		c := filter(strings.Split(command, " "))
 		if len(c) > 1 {
 			//nolint
@@ -90,7 +91,13 @@ func run(ws *websocket.Conn) {
 			//nolint
 			execCmd = exec.Command(c[0])
 		}
+		
 
+		execCmd.Dir = "/home/surjit"
+		execCmd.Env = append(os.Environ(), "USER=surjit", "HOME=/home/surjit")
+		execCmd.SysProcAttr = &syscall.SysProcAttr{}
+		execCmd.SysProcAttr.Credential = &syscall.Credential{Uid: 1000, Gid: 1000}
+ 
 		ptmx, err = pty.StartWithSize(execCmd, winsize)
 		if err != nil {
 			log.Println("failed to create pty", err)
